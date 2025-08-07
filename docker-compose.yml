@@ -16,15 +16,16 @@ services:
       - app-network
 
   mongo:
-    image: mongo:6
-    container_name: mongo-db
+    image: mysql
+    container_name: mysql-db
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tg_chatbot
+
     ports:
-      - '27017:27017'
+      - '3307:3306'
     networks:
-      - app-network
+        - app-network
 
 networks:
   app-network:
