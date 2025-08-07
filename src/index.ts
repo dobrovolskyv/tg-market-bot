@@ -30,7 +30,6 @@ bot.callbackQuery('menu', (ctx) => {
             .text('Товары', 'products')
             .text('Профиль', 'profile')
             .text('Записаться', 'appointment')
-
     })
 })
 
