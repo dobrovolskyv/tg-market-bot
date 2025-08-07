@@ -65,6 +65,12 @@ export const handleTime = async (ctx: CallbackQueryContext<MyContext>) => {
         await ctx.answerCallbackQuery();
         await ctx.editMessageText(`✅ Вы записаны к ${session.doctor} на ${time}\nСтатус: ожидает подтверждения.`)
 
+        const keyboard = new InlineKeyboard().text('Назад', 'backToMenu')
+
+        await ctx.reply(`Вернуться в главное меню`, {
+            reply_markup: keyboard
+        })
+
         tempSessions.delete(chatId)
     } catch (error) {
         console.error("Ошибка при записи:", error);

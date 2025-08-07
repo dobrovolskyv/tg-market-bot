@@ -1,11 +1,11 @@
 import 'dotenv/config';
 import { Bot, GrammyError, HttpError, InlineKeyboard } from 'grammy';
 import { hydrate } from '@grammyjs/hydrate';
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 import { MyContext } from './types.js';
-import { start, profile, productsCommand } from './commands/index.js'
-// @ts-ignore
-import { appointment, handleDoctor, handleTime } from "./commands/appointment.ts";
+import { start, profile, productsCommand, status } from './commands/index.js'
+
+import { appointment, handleDoctor, handleTime } from "./commands/appointment.js";
 
 import { products } from './consts/products.js';
 
@@ -29,7 +29,8 @@ bot.callbackQuery('menu', (ctx) => {
         reply_markup: new InlineKeyboard()
             .text('Товары', 'products')
             .text('Профиль', 'profile')
-            .text('Записаться', 'appointment')
+            .text('Записаться', 'appointment').row()
+            .text('Статус заказа', 'status')
     })
 })
 
@@ -45,7 +46,8 @@ bot.callbackQuery(/^choose_doctor:.+$/, handleDoctor);
 // Выбор времени
 bot.callbackQuery(/^choose_time:.+$/, handleTime);
 
-bot.callbackQuery(/^buyProduct-\d+$/, (ctx) => {
+//выбор товара
+bot.callbackQuery(/^buyProduct-\d+$/,  (ctx) => {
     ctx.answerCallbackQuery();
     const productId = ctx.callbackQuery.data.split('-')[1];
     const product = products.find(
@@ -56,19 +58,31 @@ bot.callbackQuery(/^buyProduct-\d+$/, (ctx) => {
         return ctx.callbackQuery.message?.editText('Товар не найден')
     }
     ctx.callbackQuery.message?.editText(`Вы выбрали товар: ${product.name}`)
+
+    setTimeout( () => {
+        const keyboard = new InlineKeyboard().text('Назад', 'backToMenu')
+
+         ctx.reply(`Вернуться в главное меню`, {
+            reply_markup: keyboard
+        })
+    }, 1000)
+
 })
 
 bot.callbackQuery('backToMenu', (ctx) => {
     ctx.answerCallbackQuery();
 
-    ctx.callbackQuery.message?.editText('Вы в главном меню мазазина.\nОтсюда вы можете попасть в раздел с товарами и в свой профил. Для перехода нажмите на кнопку ниже:', {
+    ctx.callbackQuery.message?.editText('Вы в главном меню магазина.\nОтсюда вы можете попасть в раздел с товарами, в свой профил и записаться на прием к врачу. Для перехода нажмите на кнопку ниже:', {
         reply_markup: new InlineKeyboard()
             .text('Товары', 'products')
             .text('Профиль', 'profile')
-            .text('Записаться', 'appointment')
+            .text('Записаться', 'appointment').row()
+            .text('Статус заказа', 'status')
     })
 })
 
+//статус записи
+bot.callbackQuery('status', status)
 // Ответ на любое сообщение
 bot.on('message:text', (ctx) => {
     ctx.reply(ctx.message.text);
