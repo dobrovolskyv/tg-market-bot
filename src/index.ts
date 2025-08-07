@@ -1,13 +1,13 @@
 import 'dotenv/config';
-import {Bot, GrammyError, HttpError, InlineKeyboard} from 'grammy';
-import {hydrate} from '@grammyjs/hydrate';
+import { Bot, GrammyError, HttpError, InlineKeyboard } from 'grammy';
+import { hydrate } from '@grammyjs/hydrate';
 import mongoose from 'mongoose';
-import {MyContext} from './types.js';
-import {start, profile, productsCommand} from './commands/index.js'
+import { MyContext } from './types.js';
+import { start, profile, productsCommand } from './commands/index.js'
 // @ts-ignore
-import {appointment, handleDoctor, handleTime} from "./commands/appointment.ts";
+import { appointment, handleDoctor, handleTime } from "./commands/appointment.ts";
 
-import {products} from './consts/products.js';
+import { products } from './consts/products.js';
 
 
 const BOT_API_KEY = process.env.BOT_TOKEN;
@@ -65,6 +65,7 @@ bot.callbackQuery('backToMenu', (ctx) => {
         reply_markup: new InlineKeyboard()
             .text('Товары', 'products')
             .text('Профиль', 'profile')
+            .text('Записаться', 'appointment')
     })
 })
 
@@ -91,10 +92,8 @@ bot.catch((err) => {
 // Функция запуска бота
 async function startBot() {
 
-
     try {
-
-         bot.start();
+        bot.start();
         console.log('Bot started');
     } catch (error) {
         console.error('Error in startBot:', error);
