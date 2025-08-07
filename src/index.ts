@@ -91,7 +91,6 @@ bot.catch((err) => {
 
 // Функция запуска бота
 async function startBot() {
-
     try {
         bot.start();
         console.log('Bot started');
