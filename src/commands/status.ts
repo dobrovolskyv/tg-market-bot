@@ -21,7 +21,11 @@ export const status = async (ctx: CallbackQueryContext<MyContext>) => {
 
         const userId = users[0].id
 
-        const [statusRows] = await pool.query("SELECT * FROM  appointments WHERE user_id = ? ORDER BY appointment_time DESC LIMIT 1", [userId])
+        
+
+        const [statusRows] = await pool.query("SELECT status FROM appointments WHERE user_id = ? ORDER BY id DESC LIMIT 1", [userId])
+
+        console.log('statusrow',statusRows);
 
         const result = statusRows as any[];
         if (result.length === 0) {
