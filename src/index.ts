@@ -77,7 +77,7 @@ bot.callbackQuery('backToMenu', (ctx) => {
             .text('Товары', 'products')
             .text('Профиль', 'profile')
             .text('Записаться', 'appointment').row()
-            .text('Статус заказа', 'status')
+            .text('Статус записи', 'status')
     })
 })
 

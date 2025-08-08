@@ -21,18 +21,25 @@ export const status = async (ctx: CallbackQueryContext<MyContext>) => {
 
         const userId = users[0].id
 
-        const [statusRows] = await pool.query("SELECT status FROM appointments WHERE user_id = ? ORDER BY id DESC LIMIT 1", [userId])
+        const [statusRows] = await pool.query("SELECT status, doctor, appointment_time FROM appointments WHERE user_id = ? ORDER BY id DESC LIMIT 1", [userId])
 
         const result = statusRows as any[];
         if (result.length === 0) {
             return ctx.callbackQuery.message?.editText('У вас пока нет записей.')
         }
 
-        const status = result[0].status;
+        const { status, doctor, appointment_time } = result[0];
 
         const keyboard = new InlineKeyboard().text('Назад', 'backToMenu')
 
-        await ctx.callbackQuery.message?.editText(`Статус заказа: ${status}`, {
+        const message = ` Статус записи: ${status}\nВрач: ${doctor}\nВремя приёма: ${new Date(appointment_time).toLocaleString('ru-RU', {
+            dateStyle: 'short',
+            timeStyle: 'short'
+        })}`
+
+
+
+        await ctx.callbackQuery.message?.editText(message, {
             reply_markup: keyboard
         })
 
