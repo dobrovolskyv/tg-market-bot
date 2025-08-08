@@ -12,7 +12,7 @@ export const status = async (ctx: CallbackQueryContext<MyContext>) => {
     }
 
     try {
-        const [userRows] = await pool.query("SELECT * FROM users WHERE telegram_chat_id = ?", [telegramChatId])
+        const [userRows] = await pool.query("SELECT id FROM users WHERE telegram_chat_id = ?", [telegramChatId])
 
         const users = userRows as any[]
         if (users.length === 0) {
@@ -21,11 +21,7 @@ export const status = async (ctx: CallbackQueryContext<MyContext>) => {
 
         const userId = users[0].id
 
-        
-
         const [statusRows] = await pool.query("SELECT status FROM appointments WHERE user_id = ? ORDER BY id DESC LIMIT 1", [userId])
-
-        console.log('statusrow',statusRows);
 
         const result = statusRows as any[];
         if (result.length === 0) {
