@@ -3,33 +3,43 @@ import { MyContext } from "../types.js";
 // import { products } from "../consts/products.js";
 import { pool } from "../database/connect.js";
 
-export const productsCommand =async (ctx: CallbackQueryContext<MyContext>) => {
+export const productsCommand = async (ctx: CallbackQueryContext<MyContext>) => {
     ctx.answerCallbackQuery();
 
     if (!ctx.callbackQuery?.data) return;
 
-    const [products] = await pool.query("SELECT * FROM products")
+    const keyboard = new InlineKeyboard().text("Назад", "backToMenu")
 
-    const prod = products as any[]
+    try {
+        const [rows] = await pool.query("SELECT * FROM products")
 
-    const productsList = prod.reduce((acc, cur) => {
-        return (
-            acc + `- ${cur.name}\nЦена: ${cur.price}руб.\nОписание: ${cur.description}\n\n`
+        const products = rows as any[];
+
+        if (products.length === 0) {
+            await ctx.callbackQuery.message?.editText('Товары не найдены',
+                { reply_markup: keyboard }
+            )
+            return
+        }
+
+        const productsList = products.map((product) => {
+            return `- ${product.name}\nЦена: ${product.price}руб.\nОписание: ${product.description}\n\n`
+        })
+
+        const btnProduct = new InlineKeyboard()
+        products.forEach((btn) => {
+            btnProduct.text(btn.name, `buyProduct-${btn.id}`).row()
+        })
+
+        await ctx.callbackQuery.message?.editText(`Все товары:\n${productsList}`, {
+            reply_markup: btnProduct
+        })
+    } catch (error) {
+        console.log(error)
+        await ctx.callbackQuery.message?.editText('Произошла ошибка',
+            { reply_markup: keyboard }
         )
-    }, '')
 
-    const messageText = `Все товары:\n${productsList}`
+    }
 
-    const keyboardButtonRows = prod.map((product) => {
-        return InlineKeyboard.text(product.name, `buyProduct-${product.id}`)
-    })
-
-    const keyboard = InlineKeyboard.from([
-        keyboardButtonRows,
-        [InlineKeyboard.text('Назад', 'backToMenu')]
-    ])
-
-    ctx.callbackQuery.message?.editText(messageText, {
-        reply_markup: keyboard,
-    })
 }

@@ -47,8 +47,8 @@ bot.callbackQuery(/^choose_doctor:.+$/, handleDoctor);
 bot.callbackQuery(/^choose_time:.+$/, handleTime);
 
 //выбор товара
-bot.callbackQuery(/^buyProduct-\d+$/,  (ctx) => {
-    ctx.answerCallbackQuery();
+bot.callbackQuery(/^buyProduct-\d+$/, async  (ctx) => {
+   await ctx.answerCallbackQuery();
     const productId = ctx.callbackQuery.data.split('-')[1];
     const product = products.find(
         (product) => product.id === parseInt(productId)
@@ -57,7 +57,9 @@ bot.callbackQuery(/^buyProduct-\d+$/,  (ctx) => {
     if (!product) {
         return ctx.callbackQuery.message?.editText('Товар не найден')
     }
-    ctx.callbackQuery.message?.editText(`Вы выбрали товар: ${product.name}`)
+   await  ctx.callbackQuery.message?.editText(`Вы выбрали товар: ${product.name}`)
+
+
 
     setTimeout( () => {
         const keyboard = new InlineKeyboard().text('Назад', 'backToMenu')
