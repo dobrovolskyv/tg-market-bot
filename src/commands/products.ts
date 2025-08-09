@@ -1,6 +1,6 @@
 import { CallbackQueryContext, InlineKeyboard } from "grammy";
 import { MyContext } from "../types.js";
-// import { products } from "../consts/products.js";
+
 import { pool } from "../database/connect.js";
 
 export const productsCommand = async (ctx: CallbackQueryContext<MyContext>) => {
